@@ -6,7 +6,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 mongoose.connect('mongodb+srv://bogdan:2Ff2NfVvK42ZbWw4@cluster0.qjyufua.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0');
 
-const usernameSchema = new mongoose.Schema({username: String});
+const usernameSchema = new mongoose.Schema({username: {type: String, required: true}});
 const usernameModel = mongoose.model('username', usernameSchema);
 
 app.use(cors())
