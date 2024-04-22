@@ -6,8 +6,22 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 mongoose.connect('mongodb+srv://bogdan:2Ff2NfVvK42ZbWw4@cluster0.qjyufua.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0');
 
-const usernameSchema = new mongoose.Schema({username: {type: String, required: true}});
+const usernameSchema = new mongoose.Schema({ username: { type: String, required: true } });
 const usernameModel = mongoose.model('username', usernameSchema);
+const logsSchema = new mongoose.Schema(
+  {
+    _id: { type: String, required: true },
+    count: { type: Number, default: 0 },
+    log: [
+      {
+        description: { type: String, required: true },
+        duration: { type: String, required: true },
+        date: { type: String, default: new Date().toDateString() }
+      },
+    ]
+  }
+);
+const logsModel = mongoose.model('logs', logsSchema);
 
 app.use(cors())
 app.use(express.static('public'))
@@ -15,12 +29,13 @@ app.get('/', (req, res) => {
   res.sendFile(__dirname + '/views/index.html')
 });
 
-app.post('/api/users', bodyParser.urlencoded({extended: false}), async function (req, res) {
-  const user = await usernameModel.create({username: req.body.username});
-  res.json({username: user.username, _id: user._id});
+app.post('/api/users', bodyParser.urlencoded({ extended: false }), async function (req, res) {
+  const user = await usernameModel.create({ username: req.body.username });
+  await logsModel.create({ username: req.body.username });
+  res.json({ username: user.username, _id: user._id });
 })
 
-app.post('/api/users/:_id/exercises', bodyParser.urlencoded({extended: false}), function (req, res) {
+app.post('/api/users/:_id/exercises', bodyParser.urlencoded({ extended: false }), function (req, res) {
   res.send('retrieveng exercises')
 })
 
