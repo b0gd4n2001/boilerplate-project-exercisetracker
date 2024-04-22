@@ -29,6 +29,10 @@ app.get('/api/users/:_id/logs/:from?/:to?/:limit?', function (req, res) {
   res.send(req.params);
 })
 
+app.get('/api/users', async function (req, res) {
+  res.send(await usernameModel.find());
+})
+
 const listener = app.listen(process.env.PORT || 3000, () => {
   console.log('Your app is listening on port ' + listener.address().port)
 })
