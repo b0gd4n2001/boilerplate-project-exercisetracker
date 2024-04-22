@@ -17,7 +17,7 @@ app.get('/', (req, res) => {
 
 app.post('/api/users', bodyParser.urlencoded({extended: false}), async function (req, res) {
   const user = await usernameModel.create({username: req.body.username});
-  res.send({username: user.username, _id: user._id});
+  res.json({username: user.username, _id: user._id});
 })
 
 app.post('/api/users/:_id/exercises', bodyParser.urlencoded({extended: false}), function (req, res) {
