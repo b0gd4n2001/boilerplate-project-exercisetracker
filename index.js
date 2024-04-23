@@ -72,13 +72,14 @@ app.get('/api/users/:_id/logs/:from?/:to?/:limit?', async function (req, res) {
   //console.log(req.params, req.query);
   const user = await usernameModel.findById(req.params._id);
   const exercises = await exerciseModel.find({ userid: user._id });
-  let from = req.params.from ?? req.query.from ?? -Infinity;
-  let to = req.params.to ?? req.query.to ?? Infinity;
-  let limit = req.params.limit ?? req.query.limit ?? Infinity;
+  console.log(exercises.date)
+  let from = req.params.from ?? req.query.from;
+  let to = req.params.to ?? req.query.to;
+  let limit = req.params.limit ?? req.query.limit;
   let log = new Array(exercises);
   log = log.flat(Infinity);
 
-  log = log.filter((x) => Date.parse(x.date) >= from && Date.parse(x.date) <= to);
+  log = log.filter((x) => new Date(x.date) >= new Date(from ?? x.date) && new Date(x.date) <= new Date(to ?? x.date));
 
   log = log.slice(0, limit);
   log = log.map((x) => (
