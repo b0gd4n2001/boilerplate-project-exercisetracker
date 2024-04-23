@@ -47,7 +47,7 @@ app.post('/api/users/:_id/exercises', bodyParser.urlencoded({ extended: false })
   await userDoc.save();
   answer._id = userDoc._id;
   answer.username = userDoc.username;
-  res.send(answer);
+  res.json(answer);
 })
 
 app.get('/api/users/:_id/logs/:from?/:to?/:limit?', function (req, res) {
