@@ -11,13 +11,14 @@ const usernameModel = mongoose.model('username', usernameSchema);
 const logsSchema = new mongoose.Schema(
   {
     _id: { type: String, required: true },
+    username: { type: String, required: true },
     count: { type: Number, default: 0 },
     log: [
       {
         description: { type: String, required: true },
         duration: { type: String, required: true },
-        date: { type: String, default: new Date().toDateString() }
-      },
+        date: { type: String, required: true }
+      }
     ]
   }
 );
@@ -31,16 +32,26 @@ app.get('/', (req, res) => {
 
 app.post('/api/users', bodyParser.urlencoded({ extended: false }), async function (req, res) {
   const user = await usernameModel.create({ username: req.body.username });
-  await logsModel.create({ _id: user._id });
+  await logsModel.create({ _id: user._id, username: user.username });
   res.json({ username: user.username, _id: user._id });
 })
 
-app.post('/api/users/:_id/exercises', bodyParser.urlencoded({ extended: false }), function (req, res) {
-  res.send('retrieveng exercises')
+app.post('/api/users/:_id/exercises', bodyParser.urlencoded({ extended: false }), async function (req, res) {
+  let answer = {
+    description: req.body.description,
+    duration: req.body.duration,
+    date: new Date(req.body.date) != 'Invalid Date' ? new Date(req.body.date).toDateString() : new Date().toDateString()
+  }
+  const userDoc = await logsModel.findById(req.params._id);
+  userDoc.log.push(answer);
+  await userDoc.save();
+  answer._id = userDoc._id;
+  answer.username = userDoc.username;
+  res.send(answer);
 })
 
 app.get('/api/users/:_id/logs/:from?/:to?/:limit?', function (req, res) {
-  console.log(req.params, req.query);
+  //console.log(req.params, req.query);
   res.send(req.params);
 })
 
