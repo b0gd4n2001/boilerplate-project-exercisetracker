@@ -39,7 +39,7 @@ app.post('/api/users', bodyParser.urlencoded({ extended: false }), async functio
 app.post('/api/users/:_id/exercises', bodyParser.urlencoded({ extended: false }), async function (req, res) {
   let answer = {
     description: req.body.description,
-    duration: req.body.duration,
+    duration: Number(req.body.duration),
     date: new Date(req.body.date) != 'Invalid Date' ? new Date(req.body.date).toDateString() : new Date().toDateString()
   }
   const userDoc = await logsModel.findById(req.params._id);
